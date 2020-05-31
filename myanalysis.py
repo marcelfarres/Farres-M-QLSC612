@@ -110,21 +110,15 @@ np.random.seed(our_seed)
 random_idx = np.random.choice(np.arange(num_distr), size=(sample_size,), p=coefficients)
 partY2 = rdata[np.arange(sample_size), random_idx]
 
-plt.hist(partY, density=True)
-plt.show()
+# plt.hist(partY, density=True)
+# plt.show()
 
-plt.hist(partY2, density=True)
-plt.show()
+# plt.hist(partY2, density=True)
+# plt.show()
 
 
 # enbedd our new super amazin varaliable in our dataframe
 # 
-
-# In[ ]:
-
-
-
-
 
 # In[7]:
 
@@ -330,22 +324,4 @@ rs = model.fit()
 print(rs.summary())
 fig = plt.figure(figsize=(12,12))
 fig = sm.graphics.plot_partregress_grid(rs, fig=fig)
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 
