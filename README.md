@@ -20,10 +20,8 @@ Follow next steps to run the example script:
 
     `conda env create --file phacking.yml`
 
-    
-
 4. Run the script (you can use the notebook or the py script)
 
-    - Script:`python myanalysis.py`
+    - Script: `python myanalysis.py`
 
     - Notebook:`jupyter lab myanalysis.ipynb`

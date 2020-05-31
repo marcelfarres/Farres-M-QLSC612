@@ -76,9 +76,9 @@ data = dataf
 
 # # Create our first very important variable base on very fine observations
 
-# One of our most interesting data we did not include in the previous csv was the Time to Get from the Door to the Chair (TGDC)  and also very intersting Time to Get from the Chair to the Door (TGCD).
+# One of our most interesting data we did not include in the previous csv was the **Time to Get from the Door to the Chair** (TGDC)  and also very intersting **Time to Get from the Chair to the Door** (TGCD).
 # 
-# Both are measured in seconds and are rounded to full seconds
+# Both are *measured* in seconds and are rounded to full seconds.
 # 
 # These where calculated using the hacked security system of our lab. 
 
@@ -110,6 +110,7 @@ np.random.seed(our_seed)
 random_idx = np.random.choice(np.arange(num_distr), size=(sample_size,), p=coefficients)
 partY2 = rdata[np.arange(sample_size), random_idx]
 
+# Extra plots
 # plt.hist(partY, density=True)
 # plt.show()
 
@@ -117,8 +118,7 @@ partY2 = rdata[np.arange(sample_size), random_idx]
 # plt.show()
 
 
-# enbedd our new super amazin varaliable in our dataframe
-# 
+# Enbedd our new super amazin varaliable in our dataframe
 
 # In[7]:
 
@@ -140,8 +140,9 @@ data.describe()
 # In[9]:
 
 
-fig = plt.figure(figsize=(12,8))
-pdplt.scatter_matrix(data[['Weight', 'Height', 'FSIQ', 'VIQ', 'PIQ', 'MRI_Count', 'TGDC', 'TGCD']], diagonal='kde', figsize=(12,12));
+allvarsmtrx = pdplt.scatter_matrix(data[['TGDC', 'TGCD', 'Weight', 'Height', 'MRI_Count', 'FSIQ', 'VIQ', 'PIQ' ]], diagonal='kde', figsize=(12,12));
+
+plt.savefig('fig' + os.path.sep + 'scatter_matrix.png', bbox_inches='tight')
 
 
 # Looking at the distributions we see that exploring Weight, MRI_Count and Height could be a good direction
@@ -149,12 +150,11 @@ pdplt.scatter_matrix(data[['Weight', 'Height', 'FSIQ', 'VIQ', 'PIQ', 'MRI_Count'
 # In[10]:
 
 
-
-sns.set(style="ticks")
+# sns.set(style="ticks")
 
 to_explore = ['PIQ', 'VIQ', 'FSIQ', 'Weight', 'MRI_Count', 'Height']
 
-f, axes = plt.subplots(len(to_explore), 1, figsize=(10,12))
+f, axes = plt.subplots(len(to_explore), 1, figsize=(10,20))
 ptl_idx = 0
 f.tight_layout(pad=3.0)
 
@@ -164,17 +164,21 @@ for varN in to_explore:
     print('Looking at {:<10}  Slope:{:<10.3} P-value:{:<10.3}  R-squared:{:<10.3} '.format(varN, slope , r_value, r_value**2))
     ptl_idx += 1
 
+plt.savefig('fig' + os.path.sep + 'indivudual.png', bbox_inches='tight')
+
 
 # It seems that if we get rid of some big outliers we will be able to have a better result.
 # 
 # Also we confirm that Weight, MRI_Count and Height can be a good start.
 # 
 # We need to explore more our data.
+# 
+# We will use a combination algorithm to explore what are the best models to use.
 
 # In[11]:
 
 
-conditions_base = ['Weight', 'Height', 'FSIQ', 'VIQ', 'PIQ', 'MRI_Count', 'Gender']
+conditions_base = ['Weight', 'Height', 'FSIQ', 'VIQ', 'PIQ', 'MRI_Count']
 
 comb_size = list(range(1, len(conditions_base)))
 
@@ -189,10 +193,13 @@ min_pvalue = 0.05
 
 our_super_models = []
 
+
+# Create all possible combinations of conditions and operants to explore what is the best model
 for val_cond in conditions:
     
     size_op = len(val_cond)-1
     
+    # If more than one condition test all the combinations of op
     if size_op >= 1:
         op = combinations(possible_op, size_op )
         for op_val in op:
@@ -219,8 +226,6 @@ for val_cond in conditions:
             print(super_model)
             print(model_fit.summary())
 
-        
-
 
 # We found 2 super interesting models and it makes a lot of sense
 # 
@@ -235,10 +240,8 @@ for val_cond in conditions:
 super_model = 'TGDC ~ Weight : Height + MRI_Count'
 super_model2 = 'TGCD ~ Weight : Height + MRI_Count'
 
-
 # Fit the model
 model= ols(super_model, data)
-
 model_fit = model.fit()
 
 # Print the summary
@@ -251,8 +254,10 @@ print(model_fit.summary())
 fig = plt.figure(figsize=(12,12))
 fig = sm.graphics.plot_partregress_grid(model_fit, fig=fig)
 
+plt.savefig('fig' + os.path.sep + 'regressors.png', bbox_inches='tight')
 
-# We can see that our data have some outliers. We will control find what z score to use for our dataset
+
+# We can see that our data have some outliers. We will optimize our exculsion critera using the z-score in the variables we are interested.
 
 # In[14]:
 
@@ -283,11 +288,15 @@ for val in z_val:
     
 df.plot(x='z_val', y=['Rval', 'f_pvalue'], title='Z-score vs Rval')
 
+plt.savefig('fig' + os.path.sep + 'optimize-z-values.png', bbox_inches='tight')
 
-# We can confirm that we don't need to remove any outliers in our sample. Another prove that our model really works
+
+# We can confirm that we don't need to remove any outliers in our sample. Another prove that our model really works to correctly explain our data.
 
 # In[15]:
 
+
+# Code that can be use to filter the data base on a specific z
 
 # z_s = np.abs(stats.zscore(data[inculded_vars]))
 # dataf = data[(z_s < 1.27).all(axis=1)]
