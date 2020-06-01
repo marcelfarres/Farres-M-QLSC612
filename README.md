@@ -19,8 +19,12 @@ Follow next steps to run the example script:
 3. Create and install conda env running:
 
     `conda env create --file phacking.yml`
+    
+4. Activate the env.
 
-4. Run the assignment (you can use the notebook or the py script)
+    `conda activate phacking`
+
+5. Run the assignment (you can use the notebook or the py script)
 
     - Script: `python myanalysis.py`
 
