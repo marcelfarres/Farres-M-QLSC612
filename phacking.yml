@@ -9,5 +9,6 @@ dependencies:
   - matplotlib
   - numpy
   - pandas
+  - jupyterlab
 prefix: /home/marcel/miniconda3/envs/phacking
 
